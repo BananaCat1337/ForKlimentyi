@@ -1,14 +1,14 @@
-import IsbnNumberSchema from './src/IsbnNumberSchema.js';
-import BookQuantitySchema from './src/BookQuantitySchema.js';
+import IpAddressSchema from './src/IpAddressSchema.js';
+import BirthdayValidator from './src/BirthdayValidator.js';
 import UserSchema from './src/UserSchema.js';
 
 export default class Validator {
-  isbnNumber() {
-    return new IsbnNumberSchema();
+  ipAddress() {
+    return new IpAddressSchema();
   }
 
-  bookQuantity() {
-    return new BookQuantitySchema();
+  birthday() {
+    return new BirthdayValidator();
   }
 
   user() {

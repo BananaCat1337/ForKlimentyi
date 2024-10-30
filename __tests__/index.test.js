@@ -6,59 +6,59 @@ import Validator from '../index.js';
 
 test('step1', () => {
   const v = new Validator();
-  const isbnNumberSchema = v.isbnNumber();
+  const ipAddressSchema = v.ipAddress();
 
-  assert.equal(isbnNumberSchema.isValid('ISBN_978-0-40615-306-7'), true);
-  assert.equal(isbnNumberSchema.isValid('978-0-306-40615-8'), false);
-  assert.equal(isbnNumberSchema.isValid('978-0-306-40615-77'), false);
-  assert.equal(isbnNumberSchema.isValid('978-0-306-40615'), false);
-  assert.equal(isbnNumberSchema.isValid('978-0-306-40615-a'), false);
+  assert.equal(ipAddressSchema.isValid('27.168.0.1'), true);
+  assert.equal(ipAddressSchema.isValid('27.0.0.1'), true);
+  assert.equal(ipAddressSchema.isValid('172.16.0.1'), false);
+  assert.equal(ipAddressSchema.isValid('8.8.8.8'), false);
+  assert.equal(ipAddressSchema.isValid('another.invalid@123.45'), false);
+  assert.equal(ipAddressSchema.isValid(15613854), false);
 });
 
 test('step2', () => {
   const v = new Validator();
 
-  const isbnNumberSchema1 = v.isbnNumber();
-  assert.equal(isbnNumberSchema1.isValid('ISBN_978-0-40615-306-7'), true);
+  const ipAddressSchema1 = v.ipAddress();
+  assert.equal(ipAddressSchema1.isValid('27.168.0.1'), true);
 
-  const isbnNumberSchema2 = v.isbnNumber().setLengthConstraint(7);
-  assert.equal(isbnNumberSchema2.isValid('ISBN_978-0-456'), true);
-  assert.equal(isbnNumberSchema2.isValid('ISBN_978-0'), false);
+  const ipAddressSchema2 = v.ipAddress().setIpAddressLengthConstraint(7);
+  assert.equal(ipAddressSchema2.isValid('27.0.0.1.4'), true);
+  assert.equal(ipAddressSchema2.isValid('192.168'), false);
 
-  const isbnNumberSchema3 = v.isbnNumber().setLengthConstraint(4, 6);
-  assert.equal(isbnNumberSchema3.isValid('ISBN_978-0'), true);
-  assert.equal(isbnNumberSchema3.isValid('978-0-306-40615-7'), false);
+  const ipAddressSchema3 = v.ipAddress().setIpAddressLengthConstraint(4, 6);
+  assert.equal(ipAddressSchema3.isValid('27.16.0'), true);
+  assert.equal(ipAddressSchema3.isValid('8.8.8.8'), false);
 });
 
 test('step3', () => {
   const v = new Validator();
-  const bookQuantitySchema = v.bookQuantity();
+  const birthdayValidator = v.birthday();
 
-  assert.equal(bookQuantitySchema.isValid(10), true);
-  assert.equal(bookQuantitySchema.isValid(0), true);
-  assert.equal(bookQuantitySchema.isValid(-5), false);
-  assert.equal(bookQuantitySchema.isValid(10.5), false);
-  assert.equal(bookQuantitySchema.isValid('10'), false);
+  assert.equal(birthdayValidator.isValid(new Date('1990-01-01')), true);
+  assert.equal(birthdayValidator.isValid('1990-01-01'), false);
+  assert.equal(birthdayValidator.isValid(new Date('2100-01-01')), false);
+  assert.equal(birthdayValidator.isValid(new Date()), true);
 });
 
 test('step4', () => {
   const v = new Validator();
 
-  const bookQuantitySchema1 = v.bookQuantity();
-  assert.equal(bookQuantitySchema1.isValid(10), true);
+  const birthdayValidator1 = v.birthday();
+  assert.equal(birthdayValidator1.isValid(new Date('2000-01-01')), true);
 
-  const bookQuantitySchema2 = v.bookQuantity().setBookQuantityRangeConstraint(0, 100);
-  assert.equal(bookQuantitySchema2.isValid(50), true);
-  assert.equal(bookQuantitySchema2.isValid(150), false);
+  const birthdayValidator2 = v.birthday().setAdultValidator();
+  assert.equal(birthdayValidator2.isValid(new Date('2000-01-01')), true);
+  assert.equal(birthdayValidator2.isValid(new Date('2010-01-01')), false);
 });
 
 test('step5', () => {
   const v = new Validator();
   const userSchema = v.user().shape({
-    isbnNumber: v.isbnNumber().setLengthConstraint(7),
-    bookQuantity: v.bookQuantity().setBookQuantityRangeConstraint(0, 100),
+    ipAddress: v.ipAddress().setIpAddressLengthConstraint(7),
+    birthday: v.birthday().setAdultValidator(),
   });
 
-  assert.equal(userSchema.isValid({ isbnNumber: 'ISBN_978-0-456', bookQuantity: 50 }), true);
-  assert.equal(userSchema.isValid({ isbnNumber: '978-0-306-40615-7', bookQuantity: 144444 }), false);
+  assert.equal(userSchema.isValid({ ipAddress: '27.0.0.1.4', birthday: new Date('2000-01-01') }), true);
+  assert.equal(userSchema.isValid({ ipAddress: '30.0.0.1', birthday: '2023-01-01' }), false);
 });

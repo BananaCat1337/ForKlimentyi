@@ -9,8 +9,8 @@ export default class UserSchema {
       return false;
     }
     return Object.keys(this.schema).every((key) => {
-      const validator = this.schema[key];
-      return validator.isValid(value[key]);
+      const validate = this.schema[key];
+      return validate.isValid(value[key]);
     });
   }
 }

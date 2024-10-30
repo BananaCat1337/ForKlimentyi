@@ -1,4 +1,3 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/-nVjX56J)
 ## Правила и регламент
 
 - [Экзамен: правила, рекомендации и порядок проведения](https://hexly.notion.site/d9289c18871c44508bc7c7f05a51d94f)
@@ -33,107 +32,111 @@ node index.js
 
 ## 1 задача
 
-Вам необходимо создать валидатор, который проверяет ISBN номера (международный стандартный книжный номер, в честь агентства ISBN) на соответствие определенным условиям. Для этого в вашем валидаторе должен быть метод `isbnNumber()`, который создает экземпляр валидатора ISBN номеров. Этот экземпляр обладает методом `isValid()`, который принимает данные на вход и возвращает значение *true* или *false* в зависимости от того, являются ли входные данные корректным ISBN номером или нет.
+Вам необходимо создать валидатор, который способен принимать аргумент и проводить его проверку на соответствие определенным условиям. В данной задаче мы ограничиваемся валидацией только IP-адресов. Для этого в вашем валидаторе должен быть метод `ipAddress()`, который создает экземпляр валидатора IP-адреса. Этот экземпляр обладает методом `isValid()`, который принимает данные на вход и возвращает значение *true* или *false* в зависимости от того, являются ли входные данные действительным IP-адресом или нет.
 
-Корректный ISBN номер начинается с *ISBN*
+**Условия**
 
-**Аргументы и методы**
+- Валидный адрес начинается с числа "27"
+
+**Методы и аргументы**
 
 - Аргумент, который мы валидируем (проверяем)
-- Метод валидатора `isbnNumber()`, который создает экземпляр валидатора ISBN номеров
-- Метод `isValid()`, который вызывается у экземпляра `isbnNumber()`. Он проверяет, являются ли входные данные корректным ISBN номером.
+- Метод валидатора `ipAddress()`, который создает экземпляр валидатора IP-адреса
+- Метод `isValid()`, который вызывается у экземпляра `ipAddress()`. Он проверяет, является ли входной аргумент действительным IP-адресом
 
 ```javascript
 const v = new Validator();
-const isbnNumberSchema = v.isbnNumber();
+const ipAddressSchema = v.ipAddress();
 
-isbnNumberSchema.isValid('ISBN_978-0-40615-306-7'); // true
-isbnNumberSchema.isValid('978-0-306-40615-8'); // false
-isbnNumberSchema.isValid('978-0-306-40615-77'); // false
-isbnNumberSchema.isValid('978-0-306-40615'); // false
-isbnNumberSchema.isValid('978-0-306-40615-a'); // false
+ipAddressSchema.isValid('27.168.0.1'); // true
+ipAddressSchema.isValid('27.0.0.1'); // true
+ipAddressSchema.isValid('172.16.0.1'); // false
+ipAddressSchema.isValid('8.8.8.8'); // false
+ipAddressSchema.isValid('invalid-ip-address'); // false
+ipAddressSchema.isValid('256.0.0.1'); // false
 ```
 
-После добавления метода `isbnNumber()`, экземпляр валидатора сможет проверять, являются ли входные данные корректным ISBN номером.
+После добавления метода `ipAddress()`, экземпляр валидатора сможет проверять, является ли входной аргумент действительным IP-адресом.
 
 ## 2 задача
 
-Вам необходимо расширить функциональность экземпляра валидатора ISBN номеров, добавив к нему метод `setLengthConstraint()`. Этот метод принимает один обязательный аргумент - минимальную длину ISBN номера, а также один необязательный аргумент - максимальную длину ISBN номера. При вызове метода `setLengthConstraint()`, он добавляет дополнительную проверку, которая будет выполняться при вызове метода `isValid()`.
+Вам необходимо расширить функциональность экземпляра валидатора IP-адресов, добавив к нему метод `setIpAddressLengthConstraint()`. Этот метод принимает один обязательный аргумент - минимальную длину IP-адреса, а также один необязательный аргумент - максимальную длину IP-адреса. При вызове метода `setIpAddressLengthConstraint()`, он добавляет дополнительную проверку, которая будет выполняться при вызове метода `isValid()`.
 
-Валидируется все что находится после *ISBN_*.
+**Условия**
+
+- Валидируется все после числа *27*
+
 
 **Методы**
 
-- Метод `setLengthConstraint()`, который вызывается у экземпляра `isbnNumber()`. Он добавляет еще одну проверку.
+- Метод `setIpAddressLengthConstraint()`, который вызывается у экземпляра `ipAddress()`. Он добавляет еще одну проверку
 
 ```javascript
 const v = new Validator();
 
-const isbnNumberSchema1 = v.isbnNumber();
-isbnNumberSchema1.isValid('ISBN_978-0-40615-306-7'); // true
+const ipAddressSchema1 = v.ipAddress();
+ipAddressSchema1.isValid('27.168.0.1'); // true
 
-const isbnNumberSchema2 = v.isbnNumber().setLengthConstraint(7);
-isbnNumberSchema2.isValid('ISBN_978-0-456'); // true
-isbnNumberSchema2.isValid('978-0-306-40615-77'); // false
+const ipAddressSchema2 = v.ipAddress().setIpAddressLengthConstraint(8);
+ipAddressSchema2.isValid('27.0.0.1.4'); // true
+ipAddressSchema2.isValid('192.168'); // false
 
-const isbnNumberSchema3 = v.isbnNumber().setLengthConstraint(4, 6);
-isbnNumberSchema3.isValid('ISBN_978-0'); // true
-isbnNumberSchema3.isValid('306-0-40615-2'); // false
+const ipAddressSchema3 = v.ipAddress().setIpAddressLengthConstraint(4, 6);
+ipAddressSchema3.isValid('27.16.0.55'); // true
+ipAddressSchema3.isValid('8.8.8.8'); // false
 ```
 
-После добавления метода `setLengthConstraint()`, экземпляр валидатора ISBN номеров будет проверять, чтобы входные данные соответствовали указанной длине ISBN номера.
+После добавления метода `setIpAddressLengthConstraint()`, экземпляр валидатора IP-адресов будет проверять, чтобы входной IP-адрес начинался с указанного префикса.
 
 ## 3 задача
 
-Вам необходимо создать валидатор, который проверяет количество книг с ISBN номерами. Для этого в вашем валидаторе должен быть метод `bookQuantity()`, который создает экземпляр валидатора количества книг. Этот экземпляр обладает методом `isValid()`, который принимает данные на вход и возвращает значение *true* или *false* в зависимости от того, являются ли входные данные корректным количеством книг.
-
-Ограничения для количества книг: количество книг не может быть отрицательным и должно быть целым числом.
-
-**Аргументы и методы**
-
-- Аргумент, который мы валидируем (проверяем)
-- Метод валидатора `bookQuantity()`, который создает экземпляр валидатора количества книг
-- Метод `isValid()`, который вызывается у экземпляра `bookQuantity()`. Он проверяет, являются ли входные данные корректным количеством книг.
-
-```javascript
-const v = new Validator();
-const bookQuantitySchema = v.bookQuantity();
-
-bookQuantitySchema.isValid(10); // true
-bookQuantitySchema.isValid(0); // true
-bookQuantitySchema.isValid(-5); // false
-bookQuantitySchema.isValid(10.5); // false
-bookQuantitySchema.isValid('10'); // false
-```
-
-После добавления метода `bookQuantity()`, экземпляр валидатора сможет проверять, являются ли входные данные корректным количеством книг.
-
-## 4 задача
-
-Вам необходимо расширить функциональность экземпляра валидатора количества книг, добавив к нему метод `setBookQuantityRangeConstraint()`. Этот метод принимает два обязательных аргумента - минимальное и максимальное значение количества книг. При вызове метода `setBookQuantityRangeConstraint()`, он добавляет дополнительную проверку, которая будет выполняться при вызове метода `isValid()`.
-
-Валидируется только количество книг, находящееся в указанном диапазоне.
+Вам необходимо создать валидатор для проверки даты рождения пользователя. Валидатор должен иметь метод `birthday()`, который создает экземпляр валидатора даты рождения. У созданного экземпляра должен быть метод `isValid()`, который проверяет, является ли переданная дата рождения допустимой.
 
 **Методы**
 
-- Метод `setBookQuantityRangeConstraint()`, который вызывается у экземпляра `bookQuantity()`. Он добавляет еще одну проверку.
+- Метод `birthday()`, который создает экземпляр валидатора даты рождения
+- Метод `isValid()`, который вызывается у экземпляра `birthday()`. Он проверяет, является ли переданная дата рождения допустимой.
+
+**Условия**
+
+- Если на вход приходит не дата, то возвращаем false
+- Если дата рождения находится в прошлом, то она допустимая, возвращаем true
+- Если дата рождения находится в будущем, то она недопустимая, возвращаем false
 
 ```javascript
 const v = new Validator();
+const birthdayValidator = v.birthday();
 
-const bookQuantitySchema1 = v.bookQuantity();
-bookQuantitySchema1.isValid(10); // true
-
-const bookQuantitySchema2 = v.bookQuantity().setBookQuantityRangeConstraint(0, 100);
-bookQuantitySchema2.isValid(50); // true
-bookQuantitySchema2.isValid(150); // false
-
-const bookQuantitySchema3 = v.bookQuantity().setBookQuantityRangeConstraint(0, 1000);
-bookQuantitySchema3.isValid(500); // true
-bookQuantitySchema3.isValid(1500); // false
+birthdayValidator.isValid(new Date('1990-01-01')); // true
+birthdayValidator.isValid('1990-01-01'); // false
+birthdayValidator.isValid(new Date('2100-01-01')); // false
+birthdayValidator.isValid(new Date()); // true (текущая дата)
 ```
 
-После добавления метода `setBookQuantityRangeConstraint()`, экземпляр валидатора количества книг будет проверять, чтобы входное значение находилось в указанном диапазоне.
+После добавления метода `birthday()`, экземпляр валидатора сможет проверять, является ли переданная дата рождения допустимой.
+
+## 4 задача
+
+Вам необходимо расширить функциональность экземпляра валидатора даты рождения. Кроме того, что он может валидировать, является ли переданная дата рождения допустимой, он должен также иметь возможность проверять, является ли возраст пользователя взрослым, если был вызван метод `setAdultValidator()`.
+
+Возраст считается взрослым, если он больше или равен 18 лет
+
+**Методы**
+
+- Метод `setAdultValidator()`, который вызывается у экземпляра `birthday()`. Он проверяет, является ли возраст пользователя взрослым.
+
+```javascript
+const v = new Validator();
+const birthdayValidator1 = v.birthday();
+
+birthdayValidator1.isValid(new Date('2000-01-01')); // true
+
+const birthdayValidator2 = v.birthday().setAdultValidator();
+birthdayValidator2.isValid(new Date('2000-01-01')); // true
+birthdayValidator2.isValid(new Date('2010-01-01')); // false
+```
+
+После добавления метода `setAdultValidator()`, экземпляр валидатора даты рождения будет способен проверять, является ли возраст пользователя взрослым.
 
 ## 5 задача
 
@@ -149,18 +152,18 @@ const v = new Validator();
 
 // Позволяет описывать валидацию для свойств пользователя
 const userSchema = v.user().shape({
-  isbnNumber: v.isbnNumber().setLengthConstraint(7),
-  bookQuantity: v.bookQuantity().setBookQuantityRangeConstraint(0, 1000),
+  ipAddress: v.ipAddress().setIpAddressLengthConstraint(7),
+  birthday: v.birthday().setAdultValidator(),
 });
 
 userSchema.isValid({
-  isbnNumber: 'ISBN_978-0-456',
-  bookQuantity: 500,
+  ipAddress: '27.0.0.1.4',
+  birthday: new Date('2000-01-01'),
 }); // true
 
 userSchema.isValid({
-  isbnNumber: '978-0-306-40615-7',
-  bookQuantity: 144444,
+  ipAddress: '30.0.0.1',
+  birthday: 2023-01-01,
 }); // false
 ```
 
